@@ -28,6 +28,23 @@ def acc_reg():
     img = qrcode.make(cogniid)
     img.save(cogniid+email+".png")  
     return "ok",200
+@app.route('/api/verify', methods=["POST"])
+def acc_reg():
+    data  = request.get_json(force=True)
+    cogniid = data['cogni_id']
+    email = data['email']
+    file = request.files['image']
+    file.save(cogniid+'_ver.png')
+    img=cv2.imread(cogniid+'.png')
+    face_cascade = cv2.CascadeClassifier('face.xml')
+    face_img = img.copy()
+    face_rect = face_cascade.detectMultiScale(face_img,scaleFactor = 1.2,minNeighbors = 5)
+    for (x, y, w, h) in face_rect:
+        cv2.rectangle(face_img, (x, y),(x + w, y + h), (255, 255, 255), 10)
+        faces = img[y:y + h, x:x + w]
+    cv2.imwrite(cogniid+'_ver.png', faces)
+    obj = DeepFace.verify(faces,img2_path="C:/Users/adity/OneDrive/Pictures/Camera Roll/test/test2.jpg",enforce_detection= False)
+    return obj['verified'],"ok",200
 
 
 app.run(host='0.0.0.0', port=81)
