@@ -7,9 +7,11 @@ import json
 import requests
 import os
 from jsonrpcclient import request as req, parse, Ok
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app,resources={r"/api/*": {"origins": "*"}})
 DB = {}
 
 QN_ENDP = "https://falling-broken-glade.solana-devnet.discover.quiknode.pro/1c32aed1b5093f00f58b940bbccdc99391b867ea/"
